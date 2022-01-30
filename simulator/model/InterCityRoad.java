@@ -1,8 +1,8 @@
 package simulator.model;
 
-public class UrbanRoad extends Road {
+public class InterCityRoad extends Road {
 
-	UrbanRoad(String id, Junction srcJunc, Junction destJunc, int maxSpeed, int contLimit, int length,
+	InterCityRoad(String id, Junction srcJunc, Junction destJunc, int maxSpeed, int contLimit, int length,
 			Weather weather) {
 		super(id, srcJunc, destJunc, maxSpeed, contLimit, length, weather);
 		// TODO Auto-generated constructor stub
