@@ -1,9 +1,18 @@
 package simulator.model;
 
+import java.util.List;
+import java.util.Map;
+
 import org.json.JSONObject;
 
 public class Junction extends SimulatedObject {
 
+	private List<Road> roads;
+	private Map<Junction, Road> mapRoads;
+	private List<List<Vehicle>> queueVehicles;
+	private Map<Road, List<Vehicle>> roadVehicles;
+	private int indexLightSwitching;
+	private int lastLightSwitching;
 	private LightSwitchingStrategy light;
 	private DequeuingStrategy dq;
 	private int x;
