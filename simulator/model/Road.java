@@ -8,16 +8,16 @@ import org.json.JSONObject;
 
 abstract public class Road {
 
-	private String id;
-	private Junction srcJunc;
-	private Junction destJunc;
-	private int length;
-	private int maxSpeed;
-	private int limitSpeed;
-	private int contLimit;
-	private int totalCont;
-	private Weather weather;
-	private List<Vehicle> vehicles;
+	String id;
+	Junction srcJunc;
+	Junction destJunc;
+	int length;
+	int maxSpeed;
+	int limitSpeed;
+	int contLimit;
+	int totalCont;
+	Weather weather;
+	List<Vehicle> vehicles;
 	
 	Road(String id, Junction srcJunc, Junction destJunc, int maxSpeed, int contLimit, int length, Weather weather) {
 		if (maxSpeed < 0 || contLimit < 0 || length < 0 || srcJunc != null || destJunc != null || weather != null)
