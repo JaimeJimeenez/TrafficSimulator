@@ -48,6 +48,8 @@ abstract public class Road {
 	void advance(int time) {
 		
 	}
+
+	String getId() { return id; }
 	
 	int getLength() { return length; }
 	

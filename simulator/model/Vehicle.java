@@ -89,10 +89,11 @@ public class Vehicle extends SimulatedObject {
 		data.put("co2", totalCont);
 		data.put("class", contClass);
 		data.put("status", status);
-		data.put("road", road);
-		data.put("location", totalDistance);
-		
-		//road and location must omitted if the status is Arrived or Pending
+
+		if (status != VehicleStatus.PENDING && status != VehicleStatus.ARRIVED) {
+			data.put("road", road.getId());
+			data.put("location", location);
+		}
 		
 		return data;
 	}
