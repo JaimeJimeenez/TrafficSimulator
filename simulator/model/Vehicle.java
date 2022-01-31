@@ -46,8 +46,7 @@ public class Vehicle extends SimulatedObject {
 	void setSpeed(int s) {
 		if (s < 0)
 			throw new IllegalArgumentException("Argument not valid");
-		//TODO
-		
+		speed = (maxSpeed > s) ? s : maxSpeed;
 	}
 	
 	void setContaminationClass(int c) {
@@ -59,8 +58,25 @@ public class Vehicle extends SimulatedObject {
 	@Override
 	void advance(int time) {
 		if (status == VehicleStatus.TRAVELING) {
-			//TODO
+			//Distance
+			int aux = location;
+			location = ((location + speed) > road.getLength()) ? road.getLength() : location + speed;
+
+			//Contamination produced
+			int contProduced = contClass * (aux - location);
+			totalCont += contProduced;
+			road.addContamination(totalCont);
+
+			//Vehicle arrived to the junction
+			if (location > road.getLength()) {
+				//TODO Add to the respective junction the vehicle
+				status = VehicleStatus.WAITING; 
+			}
 		}
+	}
+
+	void moveNextRoad() {
+		//TODO
 	}
 
 	@Override
