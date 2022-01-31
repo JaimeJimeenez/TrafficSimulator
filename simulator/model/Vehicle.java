@@ -85,7 +85,7 @@ public class Vehicle extends SimulatedObject {
 		
 		data.put("id", getId());
 		data.put("speed", speed);
-		data.put("distance", location);
+		data.put("distance", totalDistance);
 		data.put("co2", totalCont);
 		data.put("class", contClass);
 		data.put("status", status);
