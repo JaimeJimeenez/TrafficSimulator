@@ -36,7 +36,7 @@ public class RoadMap {
 	}
 
 	void addRoad(Road road) {
-
+		
 	}
 
 	void addVehicle(Vehicle v) {
@@ -59,7 +59,6 @@ public class RoadMap {
 	public List<Road> getRoads() { return Collections.unmodifiableList(new ArrayList<>(roads)); }
 
 	public List<Junction> getJunction() { return Collections.unmodifiableList(new ArrayList<>(junctions)); }
-	
 
 	public JSONObject report() {
 		JSONObject data = new JSONObject();

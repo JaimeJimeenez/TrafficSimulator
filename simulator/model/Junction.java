@@ -52,9 +52,24 @@ public class Junction extends SimulatedObject {
 		
 	}
 
+	private JSONObject getQueues() {
+		JSONObject queues = new JSONObject();
+
+		queues.put("road", mapRoads.get(this));
+		queues.put("vehicles", roadVehicles.get(this).toString());
+		return queues;
+	}
+
 	@Override
 	public JSONObject report() {
-		// TODO Auto-generated method stub
-		return null;
+		JSONObject data = new JSONObject();
+
+		data.put("id", getId());
+		if (lastLightSwitching == -1) 
+			data.put("green", "none");
+		else
+			data.put("green", lastLightSwitching);
+		data.put("queues", getQueues());
+		return data;
 	}
 }
