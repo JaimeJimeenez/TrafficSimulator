@@ -2,17 +2,19 @@ package simulator.factories;
 
 import org.json.JSONObject;
 
-public class MostCrowdedStrategyBuilder extends Builder {
+import simulator.model.LightSwitchingStrategy;
+import simulator.model.MostCrowdedStrategy;
 
-    MostCrowdedStrategyBuilder(String type) {
-        super(type);
-        //TODO Auto-generated constructor stub
+public class MostCrowdedStrategyBuilder extends Builder<LightSwitchingStrategy> {
+
+    MostCrowdedStrategyBuilder() {
+        super("most_crowded_lss");
     }
 
     @Override
-    protected Object createTheInstance(JSONObject data) {
-        // TODO Auto-generated method stub
-        return null;
+    protected LightSwitchingStrategy createTheInstance(JSONObject data) {
+        int timeSlot = data.has("timeSlot") ? data.getInt("timeSlot") : 1;
+        return new MostCrowdedStrategy(timeSlot);
     }
 
 }
