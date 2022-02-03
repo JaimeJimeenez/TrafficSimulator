@@ -75,7 +75,7 @@ public class Vehicle extends SimulatedObject {
 		}
 	}
 
-	void moveNextRoad() {
+	public void moveNextRoad() {
 		//TODO
 	}
 
