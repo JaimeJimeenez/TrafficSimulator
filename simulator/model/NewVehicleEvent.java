@@ -22,7 +22,7 @@ public class NewVehicleEvent extends Event {
     void execute(RoadMap map) {
         Vehicle v = new Vehicle(id, maxSpeed, contClass, itinerary);
         map.addVehicle(v);
-        v.moveNextRoad();
+        v.moveToNextRoad();
     }
     
 }
