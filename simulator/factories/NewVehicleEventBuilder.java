@@ -2,7 +2,9 @@ package simulator.factories;
 
 import org.json.JSONObject;
 
-public class NewVehicleEventBuilder extends Builder {
+import simulator.model.Event;
+
+public class NewVehicleEventBuilder extends Builder<Event> {
 
     NewVehicleEventBuilder(String type) {
         super(type);
@@ -10,7 +12,7 @@ public class NewVehicleEventBuilder extends Builder {
     }
 
     @Override
-    protected Object createTheInstance(JSONObject data) {
+    protected Event createTheInstance(JSONObject data) {
         // TODO Auto-generated method stub
         return null;
     }

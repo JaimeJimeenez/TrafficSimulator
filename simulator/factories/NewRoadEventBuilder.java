@@ -4,7 +4,7 @@ import org.json.JSONObject;
 
 import simulator.model.Event;
 
-abstract public class NewRoadEventBuilder extends Builder {
+abstract public class NewRoadEventBuilder extends Builder<Event> {
 
     NewRoadEventBuilder(String type) {
         super(type);
@@ -12,7 +12,7 @@ abstract public class NewRoadEventBuilder extends Builder {
     }
 
     @Override
-    protected Object createTheInstance(JSONObject data) {
+    protected Event createTheInstance(JSONObject data) {
         // TODO Auto-generated method stub
         return null;
     }
