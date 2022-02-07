@@ -1,5 +1,7 @@
 package simulator.model;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -7,8 +9,9 @@ import org.json.JSONObject;
 
 public class Junction extends SimulatedObject {
 
+	
 	private List<Road> roads;
-	private Map<Junction, Road> mapRoads;
+	private Map<Junction, Road> outGoingRoads;
 	private List<List<Vehicle>> queueVehicles;
 	private Map<Road, List<Vehicle>> roadVehicles;
 	private int indexLightSwitching;
@@ -24,6 +27,12 @@ public class Junction extends SimulatedObject {
 		this.dq = dq;
 		this.x = x;
 		this.y = y;
+		this.roads = new ArrayList<>();
+		this.outGoingRoads = new HashMap<>();
+		this.queueVehicles = new ArrayList<>();
+		this.roadVehicles = new HashMap<>();
+		this.indexLightSwitching = -1;
+		this.lastLightSwitching = -1;
 	}
 	
 	int getX() { return x; }
@@ -31,15 +40,20 @@ public class Junction extends SimulatedObject {
 	int getY() { return y; }
 	
 	public void addIncomingRoad(Road road) {
-		
+		if (road.getDest() != this)
+			throw new IllegalArgumentException("This road is not valid");
+		roads.add(road);
+		List<Vehicle>v = new ArrayList<>();
+		queueVehicles.add(v);
+		roadVehicles.put(road, v);
 	}
 	
 	public void addOutgoingRoad(Road road) {
-		
+		outGoingRoads.put(road.getDest(), road);
 	}
 	
 	void enter(Vehicle v) {
-		
+		roadVehicles.get(this).add(v);
 	}
 	
 	void roadTo(Junction junction) {
@@ -47,29 +61,33 @@ public class Junction extends SimulatedObject {
 	}
 	
 	@Override
-	void advance(int time) {
-		// TODO Auto-generated method stub
+	public void advance(int time) {
+		List<Vehicle> vehicles = dq.dequeue(roadVehicles.get(this));
+		int nextGreen = light.chooseNextGreen(roads, queueVehicles, indexLightSwitching, lastLightSwitching, time);
 		
-	}
-
-	private JSONObject getQueues() {
-		JSONObject queues = new JSONObject();
-
-		queues.put("road", mapRoads.get(this));
-		queues.put("vehicles", roadVehicles.get(this).toString());
-		return queues;
+		for (Vehicle v : vehicles) {
+			v.advance(time);
+			v.moveToNextRoad();
+		}
+		
+		if (nextGreen != indexLightSwitching) {
+			indexLightSwitching = nextGreen;
+			lastLightSwitching = time;
+		}
 	}
 
 	@Override
 	public JSONObject report() {
 		JSONObject data = new JSONObject();
-
+		
 		data.put("id", getId());
-		if (lastLightSwitching == -1) 
+		
+		if (roads.get(indexLightSwitching).getId() != null)
+			data.put("green", roads.get(indexLightSwitching).getId());
+		else 
 			data.put("green", "none");
-		else
-			data.put("green", lastLightSwitching);
-		data.put("queues", getQueues());
+		
+		
 		return data;
 	}
 }
