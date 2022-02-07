@@ -3,18 +3,29 @@ package simulator.factories;
 import org.json.JSONObject;
 
 import simulator.model.Event;
+import simulator.model.Weather;
 
 abstract public class NewRoadEventBuilder extends Builder<Event> {
 
+    int time, length, CO2Limit, maxSpeed;
+    String id, src, dest;
+    Weather weather;
+
     NewRoadEventBuilder(String type) {
         super(type);
-        //TODO Auto-generated constructor stub
     }
 
     @Override
     protected Event createTheInstance(JSONObject data) {
-        // TODO Auto-generated method stub
-        return null;
+        this.time = data.getInt("time");
+        this.id = data.getString("id");
+        this.src = data.getString("src");
+        this.dest = data.getString("dest");
+        this.length = data.getInt("length");
+        this.CO2Limit = data.getInt("co2limit");
+        this.maxSpeed = data.getInt("maxspeed");
+        this.weather = (Weather) data.get("weather");
+        return createTheRoad();
     }
 
     abstract Event createTheRoad();
