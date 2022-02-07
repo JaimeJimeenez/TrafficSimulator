@@ -1,20 +1,26 @@
 package simulator.factories;
 
+import java.util.List;
+
 import org.json.JSONObject;
 
+import simulator.misc.Pair;
 import simulator.model.Event;
+import simulator.model.SetWeatherEvent;
+import simulator.model.Weather;
 
 public class SetWeatherEventBuilder extends Builder<Event> {
 
-    SetWeatherEventBuilder(String type) {
-        super(type);
-        //TODO Auto-generated constructor stub
-    }
+    public SetWeatherEventBuilder() {
+		super("set_weather");
+	}
 
-    @Override
-    protected Event createTheInstance(JSONObject data) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	protected Event createTheInstance(JSONObject data) {
+		int time = data.getInt("time");
+		List<Pair<String, Weather>> info = (List<Pair<String, Weather>>) data.get("info");
+		
+		return new SetWeatherEvent(time, info);
+	}
 
 }
