@@ -7,14 +7,13 @@ import simulator.model.MostCrowdedStrategy;
 
 public class MostCrowdedStrategyBuilder extends Builder<LightSwitchingStrategy> {
 
-    MostCrowdedStrategyBuilder() {
+    public MostCrowdedStrategyBuilder() {
         super("most_crowded_lss");
     }
 
     @Override
-    protected LightSwitchingStrategy createTheInstance(JSONObject data) {
-        int timeSlot = data.has("timeslot") ? data.getInt("timeslot") : 1;
-        return new MostCrowdedStrategy(timeSlot);
+    public LightSwitchingStrategy createTheInstance(JSONObject data) {
+        return new MostCrowdedStrategy(data.has("timeSlot") ? data.getInt("timeSlot") : 1);
     }
 
 }

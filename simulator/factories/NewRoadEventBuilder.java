@@ -2,7 +2,9 @@ package simulator.factories;
 
 import org.json.JSONObject;
 
-public class NewRoadEventBuilder extends Builder {
+import simulator.model.Event;
+
+abstract public class NewRoadEventBuilder extends Builder {
 
     NewRoadEventBuilder(String type) {
         super(type);
@@ -15,4 +17,5 @@ public class NewRoadEventBuilder extends Builder {
         return null;
     }
 
+    abstract Event createTheRoad();
 }

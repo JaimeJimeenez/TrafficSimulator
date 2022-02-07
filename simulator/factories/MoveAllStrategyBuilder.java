@@ -7,12 +7,12 @@ import simulator.model.MoveAllStrategy;
 
 public class MoveAllStrategyBuilder extends Builder<DequeuingStrategy> {
 
-    MoveAllStrategyBuilder() {
+    public MoveAllStrategyBuilder() {
         super("most_all_dqs");
     }
 
     @Override
-    protected DequeuingStrategy createTheInstance(JSONObject data) {
+    public DequeuingStrategy createTheInstance(JSONObject data) {
        return new MoveAllStrategy();
     }
 

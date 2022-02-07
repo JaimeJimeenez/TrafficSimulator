@@ -1,10 +1,16 @@
 package simulator.factories;
 
+import simulator.model.Event;
+
 public class NewInterCityRoadEventBuilder extends NewRoadEventBuilder {
 
-    NewInterCityRoadEventBuilder(String type) {
+    public NewInterCityRoadEventBuilder(String type) {
         super(type);
         //TODO Auto-generated constructor stub
     }
 
+    @Override
+    Event createTheRoad() {
+        return null;
+    }
 }
