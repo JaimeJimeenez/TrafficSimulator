@@ -4,7 +4,7 @@ import org.json.JSONObject;
 
 public class TrafficSimulator {
 	
-	TrafficSimulator() {
+	public TrafficSimulator() {
 		
 	}
 	

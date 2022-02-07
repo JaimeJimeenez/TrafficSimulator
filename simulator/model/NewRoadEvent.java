@@ -2,7 +2,7 @@ package simulator.model;
 
 public class NewRoadEvent extends Event {
 
-    NewRoadEvent(int time) {
+    public NewRoadEvent(int time) {
         super(time);
         //TODO Auto-generated constructor stub
     }
