@@ -78,18 +78,10 @@ abstract public class Road {
 		totalCont += c;
 	}
 	
-	abstract void reduceTotalContamination();
-	
-	abstract void updateSpeedLimit();
-	
-	abstract int calculateVehicleSpeed(Vehicle v);
-	
 	void advance(int time) {
-		
 		reduceTotalContamination();
-		
 		updateSpeedLimit();
-		
+
 		for (Vehicle v : vehicles) {
 			v.setSpeed(calculateVehicleSpeed(v));
 			v.advance(time);
@@ -107,4 +99,10 @@ abstract public class Road {
 		
 		return data;
 	}
+
+	abstract void reduceTotalContamination();
+	
+	abstract void updateSpeedLimit();
+	
+	abstract int calculateVehicleSpeed(Vehicle v);
 }
