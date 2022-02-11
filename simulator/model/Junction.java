@@ -43,22 +43,24 @@ public class Junction extends SimulatedObject {
 		if (road.getDest() != this)
 			throw new IllegalArgumentException("This road is not valid");
 		roads.add(road);
-		List<Vehicle>v = new ArrayList<>();
-		queueVehicles.add(v);
-		roadVehicles.put(road, v);
+		queueVehicles.add(new ArrayList<Vehicle>());
+		roadVehicles.put(road, new ArrayList<Vehicle>());
 	}
 	
 	public void addOutgoingRoad(Road road) {
+		if (outGoingRoads.containsValue(road.getDest()) || road.getSrc() != this)
+			throw new IllegalArgumentException("Error: This road is not valid");
 		outGoingRoads.put(road.getDest(), road);
 	}
 	
 	void enter(Vehicle v) {
-		roadVehicles.get(this).add(v);
+		for (int i = 0; i < roads.size(); i++) 
+			if (roads.get(i) == v.getRoad())
+				queueVehicles.get(i).add(v);
+		roadVehicles.get(v.getRoad()).add(v);
 	}
 	
-	void roadTo(Junction junction) {
-		
-	}
+	Road roadTo(Junction junction) { return outGoingRoads.get(junction); }
 	
 	@Override
 	public void advance(int time) {
