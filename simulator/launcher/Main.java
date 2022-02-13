@@ -1,6 +1,13 @@
 package simulator.launcher;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.util.ArrayList;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -10,14 +17,37 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import simulator.factories.Factory;
+import simulator.factories.MostCrowdedStrategyBuilder;
+import simulator.factories.MoveAllStrategyBuilder;
+import simulator.factories.MoveFirstStrategyBuilder;
+import simulator.factories.NewCityRoadEventBuilder;
+import simulator.factories.NewInterCityRoadEventBuilder;
+import simulator.factories.NewJunctionEventBuilder;
+import simulator.factories.NewVehicleEventBuilder;
+import simulator.factories.RoundRobinStrategyBuilder;
+import simulator.factories.SetContClassEventBuilder;
+import simulator.factories.SetWeatherEventBuilder;
+import simulator.control.Controller;
+import simulator.factories.Builder;
+import simulator.factories.BuilderBasedFactory;
+import simulator.model.DequeuingStrategy;
 import simulator.model.Event;
+import simulator.model.LightSwitchingStrategy;
+import simulator.model.TrafficSimulator;
 
 public class Main {
 
 	private final static Integer _timeLimitDefaultValue = 10;
+
 	private static String _inFile = null;
 	private static String _outFile = null;
+
 	private static Factory<Event> _eventsFactory = null;
+	private static Factory<LightSwitchingStrategy> _lightSwitchingFactory = null;
+	private static Factory<DequeuingStrategy> _dequeuingFactory = null;
+
+	private static Integer _steps = null;
+	private static PrintStream os;
 
 	private static void parseArgs(String[] args) {
 
@@ -33,6 +63,7 @@ public class Main {
 			parseHelpOption(line, cmdLineOptions);
 			parseInFileOption(line);
 			parseOutFileOption(line);
+			parseTicksOption(line);
 
 			// if there are some remaining arguments, then something wrong is
 			// provided in the command line!
@@ -63,6 +94,16 @@ public class Main {
 		return cmdLineOptions;
 	}
 
+	private static void parseTicksOption(CommandLine line) {
+
+		if (line.hasOption("t")) {
+			String s = line.getOptionValue("t", _timeLimitDefaultValue.toString());
+			_steps = Integer.parseInt(s);
+		}
+		else 
+			_steps = _timeLimitDefaultValue;
+	}
+
 	private static void parseHelpOption(CommandLine line, Options cmdLineOptions) {
 		if (line.hasOption("h")) {
 			HelpFormatter formatter = new HelpFormatter();
@@ -84,12 +125,38 @@ public class Main {
 
 	private static void initFactories() {
 
-		// TODO complete this method to initialize _eventsFactory
+		ArrayList<Builder<LightSwitchingStrategy>> lightsBuilder = new ArrayList<>();
+		lightsBuilder.add(new MostCrowdedStrategyBuilder());
+		lightsBuilder.add(new RoundRobinStrategyBuilder());
+		_lightSwitchingFactory = new BuilderBasedFactory<LightSwitchingStrategy>(lightsBuilder);
+
+		ArrayList<Builder<DequeuingStrategy>> dequeuingStrategy = new ArrayList<>();
+		dequeuingStrategy.add(new MoveAllStrategyBuilder());
+		dequeuingStrategy.add(new MoveFirstStrategyBuilder());
+		_dequeuingFactory = new BuilderBasedFactory<DequeuingStrategy>(dequeuingStrategy);
+
+		ArrayList<Builder<Event>> eventsBuilder = new ArrayList<>();
+		eventsBuilder.add(new NewCityRoadEventBuilder());
+		eventsBuilder.add(new NewInterCityRoadEventBuilder());
+		eventsBuilder.add(new NewVehicleEventBuilder());
+		eventsBuilder.add(new NewJunctionEventBuilder(_lightSwitchingFactory, _dequeuingFactory));
+		eventsBuilder.add(new SetContClassEventBuilder());
+		eventsBuilder.add(new SetWeatherEventBuilder());
+		_eventsFactory = new BuilderBasedFactory<Event>(eventsBuilder);
 
 	}
 
 	private static void startBatchMode() throws IOException {
-		// TODO complete this method to start the simulation
+		TrafficSimulator sim = new TrafficSimulator();
+		Controller ctrl = new Controller(sim, _eventsFactory);
+
+		try (InputStream is = new FileInputStream(new File(_inFile));) {
+			ctrl.loadEvents(is);
+		} catch (FileNotFoundException e) {
+			throw new IOException("Invalid Input File");
+		}
+
+		ctrl.run(_steps, os);
 	}
 
 	private static void start(String[] args) throws IOException {
