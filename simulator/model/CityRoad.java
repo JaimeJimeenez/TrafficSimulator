@@ -9,8 +9,8 @@ public class CityRoad extends Road {
 
 	@Override
 	void reduceTotalContamination() {
-		totalCont = (weather == Weather.STORM || weather == Weather.WINDY) ? totalCont - 2 : totalCont - 10;
-		if (totalCont < 0)
+		totalCO2 = (weather == Weather.STORM || weather == Weather.WINDY) ? totalCO2 - 10 : totalCO2 - 2;
+		if (totalCO2 < 0)
 			throw new IllegalArgumentException("Contamination negative");
 	}
 
@@ -18,6 +18,6 @@ public class CityRoad extends Road {
 	void updateSpeedLimit() { }
 
 	@Override
-	int calculateVehicleSpeed(Vehicle v) { return ((11 - v.getContClass()) * limitSpeed)/11; }
+	int calculateVehicleSpeed(Vehicle v) { return ((11 - v.getContClass()) * speedLimit)/11; }
 
 }

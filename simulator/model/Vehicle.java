@@ -2,11 +2,12 @@ package simulator.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.json.JSONObject;
 
-public class Vehicle extends SimulatedObject implements Comparable<Vehicle> {
+public class Vehicle extends SimulatedObject {
 
 	private List<Junction> itinerary;
 	private int maxSpeed;
@@ -17,6 +18,7 @@ public class Vehicle extends SimulatedObject implements Comparable<Vehicle> {
 	private int contClass;
 	private int totalCont;
 	private int totalDistance;
+	private int index;
 	
 	Vehicle(String id, int maxSpeed, int contClass, List<Junction> itinerary) {
 		super(id);
@@ -25,6 +27,7 @@ public class Vehicle extends SimulatedObject implements Comparable<Vehicle> {
 		this.maxSpeed = maxSpeed;
 		this.contClass = contClass;
 		this.itinerary = Collections.unmodifiableList(new ArrayList<>(itinerary));
+		this.index = 0;
 	}
 
 	public int getLocation() { return location; }
@@ -76,7 +79,17 @@ public class Vehicle extends SimulatedObject implements Comparable<Vehicle> {
 	}
 
 	public void moveToNextRoad() {
-		//TODO
+		if (status == VehicleStatus.PENDING) 
+			itinerary.get(0).enter(this);
+		else {
+			getRoad().exit(this);
+			if (index != itinerary.size()) {
+				itinerary.get(index).enter(this);
+				index++;
+			}
+			else
+				status = VehicleStatus.ARRIVED;
+		}
 	}
 
 	@Override
@@ -100,13 +113,16 @@ public class Vehicle extends SimulatedObject implements Comparable<Vehicle> {
 
 	public String toString() { return getId(); }
 
-	@Override
-	public int compareTo(Vehicle o) {
-		if (getLocation() > o.getLocation())
-			return 1;
-		else if (getLocation() == o.getLocation())
-			return 0;
-		else 
+	public static class CompareLocation implements Comparator<Vehicle> {
+
+		@Override
+		public int compare(Vehicle o1, Vehicle o2) {
+			if (o1.getLocation() > o2.getLocation())
+				return 1;
+			else if (o1.getLocation() == o2.getLocation())
+				return 0;
 			return -1;
+		}
+
 	}
 }

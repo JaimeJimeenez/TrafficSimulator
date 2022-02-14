@@ -11,19 +11,19 @@ public class InterCityRoad extends Road {
 	void reduceTotalContamination() {
 		switch(this.getWeather()) {
 			case SUNNY:
-				totalCont = ((100 - 2) * totalCont)/100;
+				totalCO2 = ((100 - 2) * totalCO2)/100;
 				break;
 			case CLOUDY:
-				totalCont = ((100 - 3) * totalCont)/100;
+				totalCO2 = ((100 - 3) * totalCO2)/100;
 				break;
 			case RAINY:
-				totalCont = ((100 - 10) * totalCont)/100;
+				totalCO2 = ((100 - 10) * totalCO2)/100;
 				break;
 			case WINDY:
-				totalCont = ((100 - 15) * totalCont)/100;
+				totalCO2 = ((100 - 15) * totalCO2)/100;
 				break;
 			case STORM:
-				totalCont = ((100 - 20) * totalCont)/100;
+				totalCO2 = ((100 - 20) * totalCO2)/100;
 				break;
 			default:
 				break;
@@ -31,9 +31,9 @@ public class InterCityRoad extends Road {
 	}
 
 	@Override
-	void updateSpeedLimit() { maxSpeed = totalCont > contLimit ? maxSpeed/2 : maxSpeed; }
+	void updateSpeedLimit() { maxSpeed = totalCO2 > contLimit ? maxSpeed/2 : maxSpeed; }
 
 	@Override
-	int calculateVehicleSpeed(Vehicle v) { return weather == Weather.STORM ? limitSpeed*8/10 : limitSpeed; }
+	int calculateVehicleSpeed(Vehicle v) { return weather == Weather.STORM ? speedLimit*8/10 : speedLimit; }
 
 }
