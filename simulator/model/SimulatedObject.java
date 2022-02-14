@@ -1,5 +1,7 @@
 package simulator.model;
 
+import java.util.Objects;
+
 import org.json.JSONObject;
 
 public abstract class SimulatedObject {
@@ -22,4 +24,16 @@ public abstract class SimulatedObject {
 	abstract void advance(int time);
 
 	abstract public JSONObject report();
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SimulatedObject other = (SimulatedObject) obj;
+		return Objects.equals(_id, other._id);
+	}
 }

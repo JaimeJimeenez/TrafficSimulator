@@ -71,9 +71,9 @@ public class Vehicle extends SimulatedObject {
 			road.addContamination(totalCont);
 
 			//Vehicle arrived to the junction
-			if (location > road.getLength()) {
-				//TODO Add to the respective junction the vehicle
-				status = VehicleStatus.WAITING; 
+			if (location >= road.getLength()) {
+				status = VehicleStatus.WAITING;
+				itinerary.get(0).enter(this); 
 			}
 		}
 	}
