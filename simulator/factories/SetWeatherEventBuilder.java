@@ -1,7 +1,9 @@
 package simulator.factories;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import simulator.misc.Pair;
@@ -18,7 +20,11 @@ public class SetWeatherEventBuilder extends Builder<Event> {
 	@Override
 	protected Event createTheInstance(JSONObject data) {
 		int time = data.getInt("time");
-		List<Pair<String, Weather>> info = (List<Pair<String, Weather>>) data.get("info");
+		JSONArray json = data.getJSONArray("info");
+		List<Pair<String, Weather>> info = new ArrayList<>();
+
+		for (int i = 0; i < json.length(); i++)
+			info.add(new Pair<String, Weather>(json.getJSONObject(i).getString("road"), (Weather) json.getJSONObject(i).get("weather")));
 		
 		return new SetWeatherEvent(time, info);
 	}

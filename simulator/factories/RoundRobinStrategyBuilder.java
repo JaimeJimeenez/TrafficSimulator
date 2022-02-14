@@ -9,7 +9,6 @@ public class RoundRobinStrategyBuilder extends Builder<LightSwitchingStrategy> {
 
     public RoundRobinStrategyBuilder() {
         super("round_robin_lss");
-        //TODO 
     }
 
     @Override

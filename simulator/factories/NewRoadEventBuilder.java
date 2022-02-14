@@ -24,7 +24,8 @@ abstract public class NewRoadEventBuilder extends Builder<Event> {
         this.length = data.getInt("length");
         this.CO2Limit = data.getInt("co2limit");
         this.maxSpeed = data.getInt("maxspeed");
-        this.weather = (Weather) data.get("weather");
+        this.weather = Weather.valueOf(data.getString("weather").toUpperCase());
+        
         return createTheRoad();
     }
 

@@ -1,7 +1,9 @@
 package simulator.factories;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import simulator.model.Event;
@@ -19,7 +21,11 @@ public class NewVehicleEventBuilder extends Builder<Event> {
         String id = data.getString("id");
         int maxSpeed = data.getInt("maxspeed");
         int contClass = data.getInt("class");
-        List<String> itinerary = (List<String>) data.get("itinerary");
+        JSONArray json = data.getJSONArray("itinerary");
+        List<String> itinerary = new ArrayList<>();
+
+        for (int i = 0; i < json.length(); i++) 
+            itinerary.add(json.getString(i));
         
         return new NewVehicleEvent(time, id, maxSpeed, contClass, itinerary);
     }
