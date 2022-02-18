@@ -52,8 +52,9 @@ public class RoadMap {
 		
 		for (int i = 0; i < itinerary.size(); i++) 
 			if (itinerary.get(i).roadTo(itinerary.get(i + 1)) == null)
-				return true;
-		return false;
+				return false;
+
+		return true;
 	}
 	
 	void addVehicle(Vehicle vehicle) {
