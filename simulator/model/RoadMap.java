@@ -37,8 +37,7 @@ public class RoadMap {
 		junctionsMap.put(junction.getId(), junction);
 	}
 	
-	@SuppressWarnings("unlikely-arg-type")
-	private boolean checkJunctionsRoad(Road road) { return roadsMap.containsValue(road.getSrc()) && roadsMap.containsValue(road.getDest()); }
+	private boolean checkJunctionsRoad(Road road) { return junctionsMap.containsValue(road.getSrc()) && junctionsMap.containsValue(road.getDest()); }
 	
 	void addRoad(Road road) {
 		if (roadsMap.containsKey(road.getId()) || !checkJunctionsRoad(road))
@@ -52,18 +51,16 @@ public class RoadMap {
 		
 		for (int i = 0; i < itinerary.size(); i++) 
 			if (itinerary.get(i).roadTo(itinerary.get(i + 1)) == null)
-				return false;
-
-		return true;
+				return true;
+		return false;
 	}
 	
 	void addVehicle(Vehicle vehicle) {
-		if (vehiclesMap.containsKey(vehicle.getId()) || checkItinerary(vehicle.getItinerary())) 
+		if (vehiclesMap.containsKey(vehicle.getId()))
 			throw new IllegalArgumentException("Error: Itinerary not valid or some vehicle already has the same id");
 		
 		vehicles.add(vehicle);
 		vehiclesMap.put(vehicle.getId(), vehicle);
-		vehicle.moveToNextRoad(); //?
 	}
 	
 	public Junction getJunction(String id) { return junctionsMap.get(id); }
