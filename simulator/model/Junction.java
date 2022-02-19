@@ -9,87 +9,102 @@ import org.json.JSONObject;
 
 public class Junction extends SimulatedObject {
 
-	
-	private List<Road> roads;
-	private Map<Junction, Road> outGoingRoads;
-	private List<List<Vehicle>> queueVehicles;
+	private List<Road> inRoads;
+	private Map<Junction, Road> outRoads;
+	private List<List<Vehicle>> queuesVehicles;
 	private Map<Road, List<Vehicle>> roadVehicles;
-	private int indexLightSwitching;
-	private int lastLightSwitching;
-	private LightSwitchingStrategy light;
-	private DequeuingStrategy dq;
-	private int x;
-	private int y;
+	private LightSwitchingStrategy lsStrategy;
+	private DequeuingStrategy dqsStrategy;
+	private int indexGreen, lastLightSwitch, x, y;
 	
-	Junction(String id, LightSwitchingStrategy light, DequeuingStrategy dq, int x, int y) {
+	Junction(String id, LightSwitchingStrategy lsStrategy,
+			DequeuingStrategy dqsStrategy, int x, int y) {
 		super(id);
-		this.light = light;
-		this.dq = dq;
+		
+		if (lsStrategy == null || dqsStrategy == null || x < 0 || y < 0)
+			throw new IllegalArgumentException("Error: Arguments not valid");
+		
+		this.inRoads = new ArrayList<>();
+		this.outRoads = new HashMap<>();
+		this.queuesVehicles = new ArrayList<>();
+		this.roadVehicles = new HashMap<>();
+		this.lsStrategy = lsStrategy;
+		this.dqsStrategy = dqsStrategy;
+		this.indexGreen = -1;
+		this.lastLightSwitch = 0;
 		this.x = x;
 		this.y = y;
-		this.roads = new ArrayList<>();
-		this.outGoingRoads = new HashMap<>();
-		this.queueVehicles = new ArrayList<>();
-		this.roadVehicles = new HashMap<>();
-		this.indexLightSwitching = -1;
-		this.lastLightSwitching = -1;
 	}
 	
 	int getX() { return x; }
 	
 	int getY() { return y; }
 	
-	public void addIncomingRoad(Road road) {
+	void addIncomingRoad(Road road) {
 		if (road.getDest() != this)
-			throw new IllegalArgumentException("This road is not valid");
-		roads.add(road);
-		queueVehicles.add(new ArrayList<Vehicle>());
-		roadVehicles.put(road, new ArrayList<Vehicle>());
-	}
-	
-	public void addOutgoingRoad(Road road) {
-		if (outGoingRoads.containsValue(road.getDest()) || road.getSrc() != this)
 			throw new IllegalArgumentException("Error: This road is not valid");
-		outGoingRoads.put(road.getDest(), road);
+		
+		inRoads.add(road);
+		queuesVehicles.add(new ArrayList<>());
+		roadVehicles.put(road, new ArrayList<>());
 	}
 	
-	void enter(Vehicle v) {
-		for (int i = 0; i < roads.size(); i++) 
-			if (roads.get(i) == v.getRoad())
-				queueVehicles.get(i).add(v);
-		roadVehicles.get(v.getRoad()).add(v);
+	void addOutGoingRoad(Road road) {
+		if (road.getSrc() != this || outRoads.containsKey(road.getSrc()))
+			throw new IllegalArgumentException("Error: Roads not valid");
+		
+		outRoads.put(road.getDest(), road);
 	}
 	
-	Road roadTo(Junction junction) { return outGoingRoads.get(junction); }
+	void enter(Vehicle vehicle) { roadVehicles.get(vehicle.getRoad()).add(vehicle); }
 	
+	Road roadTo(Junction junction) { return outRoads.get(junction); }
+
 	@Override
-	public void advance(int time) {
-		List<Vehicle> vehicles = dq.dequeue(roadVehicles.get(this));
-		int nextGreen = light.chooseNextGreen(roads, queueVehicles, indexLightSwitching, lastLightSwitching, time);
+	void advance(int time) {
 		
-		for (Vehicle v : vehicles) {
-			v.advance(time);
-			v.moveToNextRoad();
+		// Dequeuing Strategy
+		if (indexGreen != -1 && !queuesVehicles.isEmpty()) {
+			List<Vehicle> vehicles = queuesVehicles.get(indexGreen);
+			if (!vehicles.isEmpty()) {
+				List<Vehicle> moveVehicles = dqsStrategy.dequeue(vehicles);
+				for (Vehicle v : moveVehicles) {
+					v.moveToNextRoad();
+					vehicles.remove(v);
+				}
+			}
 		}
 		
-		if (nextGreen != indexLightSwitching) {
-			indexLightSwitching = nextGreen;
-			lastLightSwitching = time;
+		// Switch light
+		int newIndex = lsStrategy.chooseNextGreen(inRoads, queuesVehicles, indexGreen, lastLightSwitch, time);
+		
+		if (newIndex != indexGreen) {
+			indexGreen = newIndex;
+			lastLightSwitch = time;
 		}
+	}
+	
+	private JSONObject getDataQueues() {
+		JSONObject data = new JSONObject();
+		
+		for (Road r : inRoads) {
+			data.put("roads", r.getId());
+			data.put("vehicles", roadVehicles.get(r).toString());
+		}
+			
+		return data;
 	}
 
 	@Override
 	public JSONObject report() {
 		JSONObject data = new JSONObject();
 		
-		data.put("id", getId());
-		
-		if (roads.get(indexLightSwitching).getId() != null)
-			data.put("green", roads.get(indexLightSwitching).getId());
-		else 
-			data.put("green", "none");
-		
+		data.put("id", _id);
+		data.put("green", indexGreen);
+		data.put("queues", getDataQueues());
 		
 		return data;
 	}
+	
+	
 }
