@@ -29,14 +29,17 @@ public class TrafficSimulator {
 	public void advance() {
 		time++;
 		
-		for (Event e : events) 
+		for (Event e : events)
 			e.execute(roads);
+		
+		while (!events.isEmpty())
+			events.remove(0);
 		
 		for (Junction junc : roads.getJunctions()) 
 			junc.advance(time);
 		
-		for (Vehicle v : roads.getVehicles())
-			v.advance(time);
+		for (Road road : roads.getRoads())
+			road.advance(time);
 	}
 	
 	public JSONObject report() {
@@ -47,4 +50,5 @@ public class TrafficSimulator {
 		
 		return data;
 	}
+
 }
