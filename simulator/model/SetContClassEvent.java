@@ -6,7 +6,7 @@ import simulator.misc.Pair;
 
 public class SetContClassEvent extends Event {
 
-    private List<Pair<String, Integer>> cs;
+	private List<Pair<String, Integer>> cs;
 	
 	public SetContClassEvent(int time, List<Pair<String, Integer>> cs) {
 		super(time);
@@ -17,11 +17,11 @@ public class SetContClassEvent extends Event {
 
 	@Override
 	void execute(RoadMap map) {
-		for (Pair<String, Integer> c : cs) {
-			if (map.getVehicle(c.getFirst()) == null)
-				throw new IllegalArgumentException("Vehicle null");
-			map.getVehicle(c.getFirst()).setContaminationClass(c.getSecond());
-		}
+		for (Pair<String, Integer> p : cs) {
+			if (map.getVehicle(p.getFirst()) == null)
+				throw new IllegalArgumentException("Error: This vehicle doesn't exist");
+			map.getVehicle(p.getFirst()).setContaminationClass(p.getSecond());
+		}	
 	}
-    
+
 }
