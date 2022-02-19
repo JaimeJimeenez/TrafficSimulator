@@ -5,7 +5,7 @@ import java.util.List;
 
 public class NewVehicleEvent extends Event {
 
-    String id;
+	String id;
 	int maxSpeed, contClass;
 	List<String> itinerary;
 	
@@ -20,9 +20,12 @@ public class NewVehicleEvent extends Event {
 	@Override
 	void execute(RoadMap map) {
 		List<Junction> junctions = new ArrayList<>();
+		
 		for (String s : itinerary)
 			junctions.add(map.getJunction(s));
+		
 		Vehicle newVehicle = new Vehicle(id, contClass, contClass, junctions);
+		
 		map.addVehicle(newVehicle);
 		newVehicle.moveToNextRoad();
 	}
