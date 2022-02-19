@@ -3,9 +3,10 @@ package simulator.launcher;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 import org.apache.commons.cli.CommandLine;
@@ -16,6 +17,9 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import simulator.control.Controller;
+import simulator.factories.Builder;
+import simulator.factories.BuilderBasedFactory;
 import simulator.factories.Factory;
 import simulator.factories.MostCrowdedStrategyBuilder;
 import simulator.factories.MoveAllStrategyBuilder;
@@ -27,9 +31,6 @@ import simulator.factories.NewVehicleEventBuilder;
 import simulator.factories.RoundRobinStrategyBuilder;
 import simulator.factories.SetContClassEventBuilder;
 import simulator.factories.SetWeatherEventBuilder;
-import simulator.control.Controller;
-import simulator.factories.Builder;
-import simulator.factories.BuilderBasedFactory;
 import simulator.model.DequeuingStrategy;
 import simulator.model.Event;
 import simulator.model.LightSwitchingStrategy;
@@ -38,17 +39,16 @@ import simulator.model.TrafficSimulator;
 public class Main {
 
 	private final static Integer _timeLimitDefaultValue = 10;
-
+	
 	private static String _inFile = null;
 	private static String _outFile = null;
-
-	private static Factory<Event> _eventsFactory = null;
+	
+	private static Factory<Event> _eventsFactory = null;	
 	private static Factory<LightSwitchingStrategy> _lightSwitchingFactory = null;
 	private static Factory<DequeuingStrategy> _dequeuingFactory = null;
-
+	
 	private static Integer _steps = null;
-	private static PrintStream os;
-
+	
 	private static void parseArgs(String[] args) {
 
 		// define the valid command line options
@@ -82,7 +82,7 @@ public class Main {
 		}
 
 	}
-
+	
 	private static Options buildOptions() {
 		Options cmdLineOptions = new Options();
 
@@ -90,20 +90,19 @@ public class Main {
 		cmdLineOptions.addOption(
 				Option.builder("o").longOpt("output").hasArg().desc("Output file, where reports are written.").build());
 		cmdLineOptions.addOption(Option.builder("h").longOpt("help").desc("Print this message").build());
-
+		cmdLineOptions.addOption(Option.builder("t").longOpt("ticks").hasArg().desc("Ticks to the simulator's main loop (default value is 10)").build());
+		
 		return cmdLineOptions;
 	}
 
 	private static void parseTicksOption(CommandLine line) {
-
-		if (line.hasOption("t")) {
-			String s = line.getOptionValue("t", _timeLimitDefaultValue.toString());
-			_steps = Integer.parseInt(s);
-		}
-		else 
+		
+		if (line.hasOption("t")) 
+			_steps = Integer.parseInt(line.getOptionValue("t"));
+		else
 			_steps = _timeLimitDefaultValue;
+		
 	}
-
 	private static void parseHelpOption(CommandLine line, Options cmdLineOptions) {
 		if (line.hasOption("h")) {
 			HelpFormatter formatter = new HelpFormatter();
@@ -129,12 +128,12 @@ public class Main {
 		lightsBuilder.add(new MostCrowdedStrategyBuilder());
 		lightsBuilder.add(new RoundRobinStrategyBuilder());
 		_lightSwitchingFactory = new BuilderBasedFactory<LightSwitchingStrategy>(lightsBuilder);
-
-		ArrayList<Builder<DequeuingStrategy>> dequeuingStrategy = new ArrayList<>();
-		dequeuingStrategy.add(new MoveAllStrategyBuilder());
-		dequeuingStrategy.add(new MoveFirstStrategyBuilder());
-		_dequeuingFactory = new BuilderBasedFactory<DequeuingStrategy>(dequeuingStrategy);
-
+		
+		ArrayList<Builder<DequeuingStrategy>> dequeuingBuilder = new ArrayList<>();
+		dequeuingBuilder.add(new MoveAllStrategyBuilder());
+		dequeuingBuilder.add(new MoveFirstStrategyBuilder());
+		_dequeuingFactory = new BuilderBasedFactory<DequeuingStrategy>(dequeuingBuilder);
+		
 		ArrayList<Builder<Event>> eventsBuilder = new ArrayList<>();
 		eventsBuilder.add(new NewCityRoadEventBuilder());
 		eventsBuilder.add(new NewInterCityRoadEventBuilder());
@@ -143,20 +142,27 @@ public class Main {
 		eventsBuilder.add(new SetContClassEventBuilder());
 		eventsBuilder.add(new SetWeatherEventBuilder());
 		_eventsFactory = new BuilderBasedFactory<Event>(eventsBuilder);
-
+		
 	}
 
 	private static void startBatchMode() throws IOException {
 		TrafficSimulator sim = new TrafficSimulator();
 		Controller ctrl = new Controller(sim, _eventsFactory);
-
+		
 		try (InputStream is = new FileInputStream(new File(_inFile));) {
+			
 			ctrl.loadEvents(is);
+			
+			OutputStream out = _outFile == null ? System.out : new FileOutputStream(_outFile);
+			
+			ctrl.run(_steps, out);
+			
+			is.close();
+			out.close();
 		} catch (FileNotFoundException e) {
 			throw new IOException("Invalid Input File");
 		}
-
-		ctrl.run(_steps, os);
+		
 	}
 
 	private static void start(String[] args) throws IOException {
