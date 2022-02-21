@@ -15,7 +15,7 @@ abstract public class Road extends SimulatedObject {
 	Weather weather;
 	List<Vehicle> vehicles;
 	
-	Road(String id, Junction dest, Junction src, int maxSpeed, int contLimit, int legnth, Weather weather) {
+	Road(String id, Junction dest, Junction src, int maxSpeed, int contLimit, int length, Weather weather) {
 		super(id);
 		if (maxSpeed < 0 || contLimit < 0 || length < 0 || src == null || dest == null || weather == null)
 			throw new IllegalArgumentException("Argument(s) not valid");
