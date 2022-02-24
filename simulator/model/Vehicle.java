@@ -70,7 +70,6 @@ public class Vehicle extends SimulatedObject {
 			// Location update
 			location = Math.min(previous + speed, road.getLength());
 			totalDistance += (location - previous);
-			
 			// Contamination update
 			int c = (location - previous) * contClass;
 			totalCont += c;
@@ -115,7 +114,7 @@ public class Vehicle extends SimulatedObject {
 		data.put("distance", totalDistance);
 		data.put("co2", totalCont);
 		data.put("class", contClass);
-		data.put("status", status);
+		data.put("status", status.toString());
 		
 		if (status != VehicleStatus.PENDING || status != VehicleStatus.ARRIVED) {
 			data.put("road", road.getId());
@@ -137,8 +136,5 @@ public class Vehicle extends SimulatedObject {
 				return 0;
 			return -1;
 		}
-
-		
-		
 	}
 }
