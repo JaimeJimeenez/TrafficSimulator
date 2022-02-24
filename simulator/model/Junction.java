@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class Junction extends SimulatedObject {
@@ -84,13 +85,20 @@ public class Junction extends SimulatedObject {
 		}
 	}
 	
-	private JSONObject getDataQueues() {
+	private JSONObject getDataRoad(Road r) {
 		JSONObject data = new JSONObject();
 		
-		for (Road r : inRoads) {
-			data.put("roads", r.getId());
-			data.put("vehicles", roadVehicles.get(r).toString());
-		}
+		data.put("road", r.getId());
+		data.put("vehicles", r.getDataVehicles());
+		
+		return data;
+	}
+	
+	private JSONArray getDataQueues() {
+		JSONArray data = new JSONArray();
+		
+		for (Road r : inRoads) 
+			data.put(getDataRoad(r));
 			
 		return data;
 	}
@@ -100,11 +108,16 @@ public class Junction extends SimulatedObject {
 		JSONObject data = new JSONObject();
 		
 		data.put("id", _id);
-		data.put("green", indexGreen);
+		if (indexGreen == -1)
+			data.put("green", "none");
+		else
+			data.put("green", inRoads.get(indexGreen).getId());
 		data.put("queues", getDataQueues());
 		
 		return data;
 	}
+	
+	
 	
 	
 }
