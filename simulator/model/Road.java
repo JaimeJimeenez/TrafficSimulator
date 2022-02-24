@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import simulator.model.Vehicle.CompareLocation;
@@ -87,6 +88,15 @@ abstract public class Road extends SimulatedObject {
 		}
 		
 		Collections.sort(vehicles, new CompareLocation());
+	}
+
+	protected JSONArray getDataVehicles() {
+		JSONArray data = new JSONArray();
+		
+		for (Vehicle v : vehicles)
+			data.put(v.toString());
+		
+		return data;
 	}
 	
 	public JSONObject report() {
