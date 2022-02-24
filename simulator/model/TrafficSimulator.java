@@ -29,11 +29,12 @@ public class TrafficSimulator {
 	public void advance() {
 		time++;
 		
-		for (Event e : events)
-			e.execute(roads);
-		
-		while (!events.isEmpty())
+		while (!events.isEmpty()) {
+			if (events.get(0).getTime() > time)
+				break;
+			events.get(0).execute(roads);
 			events.remove(0);
+		}
 		
 		for (Junction junc : roads.getJunctions()) 
 			junc.advance(time);
