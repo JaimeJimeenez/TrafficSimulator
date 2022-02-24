@@ -47,16 +47,17 @@ public class RoadMap {
 		roadsMap.put(road.getId(), road);
 	}
 	
-	private boolean checkItinerary(List<Junction> itinerary) { //??
+	private boolean checkItinerary(List<Junction> itinerary) { 
 		
-		for (int i = 0; i < itinerary.size(); i++) 
-			if (itinerary.get(i).roadTo(itinerary.get(i + 1)) == null)
-				return true;
-		return false;
+		for (Junction j : itinerary)
+			if (!junctionsMap.containsValue(j))
+				return false;
+		
+		return true;
 	}
 	
 	void addVehicle(Vehicle vehicle) {
-		if (vehiclesMap.containsKey(vehicle.getId()))
+		if (vehiclesMap.containsKey(vehicle.getId()) || !checkItinerary(vehicle.getItinerary()))
 			throw new IllegalArgumentException("Error: Itinerary not valid or some vehicle already has the same id");
 		
 		vehicles.add(vehicle);
@@ -106,7 +107,7 @@ public class RoadMap {
 		JSONObject data = new JSONObject();
 		
 		data.put("junctions", getDataJunctions());
-		data.put("road", getDataRoads());
+		data.put("roads", getDataRoads());
 		data.put("vehicles", getDataVehicles());
 		
 		return data;
