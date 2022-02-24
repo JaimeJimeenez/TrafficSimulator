@@ -37,7 +37,7 @@ public class Controller {
 		
 		PrintStream p = new PrintStream(out);
 		p.println("{");
-		p.println("\t\"states\": [");
+		p.println("  \"states\": [");
 		
 		for (int i = 0; i < steps - 1; i++) {
 			simulator.advance();
@@ -46,7 +46,7 @@ public class Controller {
 		
 		simulator.advance();
 		p.println(simulator.report().toString());
-		p.print("]");
+		p.println("]");
 		p.println("}");
 		
 	}
