@@ -51,7 +51,7 @@ public class Junction extends SimulatedObject {
 	}
 	
 	void addOutGoingRoad(Road road) {
-		if (road.getSrc() != this || outRoads.containsKey(road.getSrc()))
+		if (road.getSrc() != this || outRoads.containsKey(road.getDest()))
 			throw new IllegalArgumentException("Error: Roads not valid");
 		
 		outRoads.put(road.getDest(), road);
