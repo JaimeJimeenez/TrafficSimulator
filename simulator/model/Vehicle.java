@@ -116,7 +116,7 @@ public class Vehicle extends SimulatedObject {
 		data.put("class", contClass);
 		data.put("status", status.toString());
 		
-		if (status != VehicleStatus.PENDING || status != VehicleStatus.ARRIVED) {
+		if (!status.equals(VehicleStatus.PENDING) && !status.equals(VehicleStatus.ARRIVED)) {
 			data.put("road", road.getId());
 			data.put("location", location);
 		}
