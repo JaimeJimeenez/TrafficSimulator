@@ -87,9 +87,12 @@ public class Junction extends SimulatedObject {
 	
 	private JSONObject getDataRoad(Road r) {
 		JSONObject data = new JSONObject();
-		
+		JSONArray vehicles = new JSONArray();
+
 		data.put("road", r.getId());
-		data.put("vehicles", r.getDataVehicles());
+		for (Vehicle v : roadVehicles.get(r)) 
+			vehicles.put(v.toString());
+		data.put("vehicles", vehicles);
 		
 		return data;
 	}
