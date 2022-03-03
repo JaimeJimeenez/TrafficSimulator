@@ -104,9 +104,9 @@ abstract public class Road extends SimulatedObject {
 		
 		data.put("id", getId());
 		data.put("speedlimit", speedLimit);
-		data.put("weather", weather);
+		data.put("weather", weather.toString());
 		data.put("co2", totalCO2);
-		data.put("vehicles", vehicles.toString()); //?
+		data.put("vehicles", getDataVehicles()); 
 		
 		return data;
 	}

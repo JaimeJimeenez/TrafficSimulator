@@ -17,7 +17,7 @@ public class Vehicle extends SimulatedObject {
 	Vehicle(String id, int maxSpeed, int contClass, List<Junction> itinerary) {
 		super(id);
 		
-		if (maxSpeed < 0 || contClass < 0 || contClass > 10 || itinerary.size() < 2)
+		if (maxSpeed <= 0 || contClass < 0 || contClass > 10 || itinerary.size() < 2)
 			throw new IllegalArgumentException("Error: Arguments for new Vehicle not valid");
 		
 		this.maxSpeed = maxSpeed;
@@ -51,8 +51,8 @@ public class Vehicle extends SimulatedObject {
 	void setSpeed(int s) {
 		if (s < 0)
 			throw new IllegalArgumentException("Error: New speed is negative");
-		
-		speed = Math.min(maxSpeed, s);
+		if (!status.equals(VehicleStatus.WAITING) && !status.equals(VehicleStatus.PENDING))
+			speed = Math.min(maxSpeed, s);
 	}
 
 	void setContaminationClass(int c) {
@@ -70,6 +70,7 @@ public class Vehicle extends SimulatedObject {
 			// Location update
 			location = Math.min(previous + speed, road.getLength());
 			totalDistance += (location - previous);
+			
 			// Contamination update
 			int c = (location - previous) * contClass;
 			totalCont += c;
@@ -77,7 +78,8 @@ public class Vehicle extends SimulatedObject {
 			
 			// Update status
 			if (location >= road.getLength()) {
-				status = VehicleStatus.WAITING;
+				if (index != itinerary.size() - 1)
+					status = VehicleStatus.WAITING;
 				speed = 0;
 				road.getDest().enter(this);
 				index++;
@@ -95,14 +97,20 @@ public class Vehicle extends SimulatedObject {
 		if (itinerary.size() - 1 == index) {
 			status = VehicleStatus.ARRIVED;
 			road = null;
+			speed = 0;
+			location = 0;
 		}
 		else {
-			road = itinerary.get(index + 1).roadTo(itinerary.get(index));
+			road = itinerary.get(index).roadTo(itinerary.get(index + 1));
 			status = VehicleStatus.TRAVELING;
+			speed = 0;
+			location = 0;
 			road.enter(this);
 		}
-		speed = 0;
-		location = 0;
+	}
+	
+	private boolean checkStatus() {
+		return (status.equals(VehicleStatus.TRAVELING) || status.equals(VehicleStatus.WAITING));
 	}
 
 	@Override
@@ -116,7 +124,7 @@ public class Vehicle extends SimulatedObject {
 		data.put("class", contClass);
 		data.put("status", status.toString());
 		
-		if (!status.equals(VehicleStatus.PENDING) && !status.equals(VehicleStatus.ARRIVED)) {
+		if (checkStatus()) {
 			data.put("road", road.getId());
 			data.put("location", location);
 		}

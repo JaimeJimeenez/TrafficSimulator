@@ -66,9 +66,11 @@ public class Junction extends SimulatedObject {
 		
 		// Dequeuing Strategy
 		if (indexGreen != -1 && !queuesVehicles.isEmpty()) {
-			List<Vehicle> vehicles = queuesVehicles.get(indexGreen);
+			List<Vehicle> vehicles = roadVehicles.get(inRoads.get(indexGreen));
+			
 			if (!vehicles.isEmpty()) {
 				List<Vehicle> moveVehicles = dqsStrategy.dequeue(vehicles);
+				
 				for (Vehicle v : moveVehicles) {
 					v.moveToNextRoad();
 					vehicles.remove(v);
@@ -88,9 +90,9 @@ public class Junction extends SimulatedObject {
 	private JSONObject getDataRoad(Road r) {
 		JSONObject data = new JSONObject();
 		JSONArray vehicles = new JSONArray();
-
+		
 		data.put("road", r.getId());
-		for (Vehicle v : roadVehicles.get(r)) 
+		for (Vehicle v : roadVehicles.get(r))
 			vehicles.put(v.toString());
 		data.put("vehicles", vehicles);
 		
@@ -119,8 +121,6 @@ public class Junction extends SimulatedObject {
 		
 		return data;
 	}
-	
-	
 	
 	
 }

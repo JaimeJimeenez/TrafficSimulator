@@ -42,6 +42,7 @@ public class Main {
 	
 	private static String _inFile = null;
 	private static String _outFile = null;
+	private static String _mode = null;
 	
 	private static Factory<Event> _eventsFactory = null;	
 	private static Factory<LightSwitchingStrategy> _lightSwitchingFactory = null;
@@ -64,6 +65,7 @@ public class Main {
 			parseInFileOption(line);
 			parseOutFileOption(line);
 			parseTicksOption(line);
+			parseModeOption(line);
 
 			// if there are some remaining arguments, then something wrong is
 			// provided in the command line!
@@ -86,6 +88,7 @@ public class Main {
 	private static Options buildOptions() {
 		Options cmdLineOptions = new Options();
 
+		cmdLineOptions.addOption(Option.builder("m").longOpt("mode").hasArg().desc("Mode of view of the simulation").build());
 		cmdLineOptions.addOption(Option.builder("i").longOpt("input").hasArg().desc("Events input file").build());
 		cmdLineOptions.addOption(
 				Option.builder("o").longOpt("output").hasArg().desc("Output file, where reports are written.").build());
@@ -122,6 +125,11 @@ public class Main {
 		_outFile = line.getOptionValue("o");
 	}
 
+	private static void parseModeOption(CommandLine line) throws ParseException {
+		if (line.hasOption("m")) 
+			_mode = line.getOptionValue("m");
+	}
+	
 	private static void initFactories() {
 
 		ArrayList<Builder<LightSwitchingStrategy>> lightsBuilder = new ArrayList<>();
@@ -168,7 +176,12 @@ public class Main {
 	private static void start(String[] args) throws IOException {
 		initFactories();
 		parseArgs(args);
-		startBatchMode();
+		if (_mode == null)
+			startBatchMode();
+		else if (_mode.equals("console"))
+			startBatchMode();
+		else
+			startBatchMode(); //It will be replace when we will implement the swing mode
 	}
 
 	// example command lines:
