@@ -37,9 +37,9 @@ public class Junction extends SimulatedObject {
 		this.y = y;
 	}
 	
-	int getX() { return x; }
+	public int getX() { return x; }
 	
-	int getY() { return y; }
+	public int getY() { return y; }
 	
 	void addIncomingRoad(Road road) {
 		if (road.getDest() != this)
@@ -60,7 +60,11 @@ public class Junction extends SimulatedObject {
 	void enter(Vehicle vehicle) { roadVehicles.get(vehicle.getRoad()).add(vehicle); }
 	
 	Road roadTo(Junction junction) { return outRoads.get(junction); }
-
+	
+	public int getGreenLightIndex() { return indexGreen; }
+	
+	public List<Road> getInRoads() { return inRoads; }
+	
 	@Override
 	void advance(int time) {
 		

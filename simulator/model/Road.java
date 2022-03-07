@@ -43,11 +43,11 @@ abstract public class Road extends SimulatedObject {
 	
 	Weather getWeather() { return weather; }
 	
-	int getContLimit() { return contLimit; }
+	public int getContLimit() { return contLimit; }
 	
 	int getMaxSpeed() { return maxSpeed; }
 	
-	int getTotalCO2() { return totalCO2; }
+	public int getTotalCO2() { return totalCO2; }
 	
 	int getSpeedLimit() { return speedLimit; }
 	
@@ -55,7 +55,7 @@ abstract public class Road extends SimulatedObject {
 	
 	void setWeather(Weather weather) {
 		if (weather == null)
-			throw new IllegalArgumentException("Weather object not valid");
+			throw new IllegalArgumentException("Weather is null");
 		this.weather = weather;
 	}
 	
@@ -89,7 +89,7 @@ abstract public class Road extends SimulatedObject {
 		
 		Collections.sort(vehicles, new CompareLocation());
 	}
-
+	
 	protected JSONArray getDataVehicles() {
 		JSONArray data = new JSONArray();
 		
@@ -106,7 +106,7 @@ abstract public class Road extends SimulatedObject {
 		data.put("speedlimit", speedLimit);
 		data.put("weather", weather.toString());
 		data.put("co2", totalCO2);
-		data.put("vehicles", getDataVehicles()); 
+		data.put("vehicles", getDataVehicles());
 		
 		return data;
 	}

@@ -1,15 +1,17 @@
 package simulator.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONObject;
 
 import simulator.misc.SortedArrayList;
 
-public class TrafficSimulator {
+public class TrafficSimulator implements Observable<TrafficSimObserver> {
 	
 	RoadMap roads;
 	List<Event> events;
+	List<TrafficSimObserver> observer;
 	int time;
 	
 	public TrafficSimulator() {
@@ -19,28 +21,50 @@ public class TrafficSimulator {
 	public void reset() {
 		roads = new RoadMap();
 		events = new SortedArrayList<>();
+		observer = new ArrayList<>();
 		time = 0;
+		
+		for (TrafficSimObserver obs : observer)
+			obs.onReset(roads, events, time);
 	}
 	
 	public void addEvent(Event event) {
 		events.add(event);
+		
+		for (TrafficSimObserver obs : observer)
+			obs.onEventAdded(roads, events, event, time);
+
 	}
 	
 	public void advance() {
-		time++;
+		try {
+			time++;
+			
+			for (TrafficSimObserver obs : observer)
+				obs.onAdvanceStart(roads, events, time);
+			
+			while (!events.isEmpty()) {
+				if (events.get(0).getTime() > time)
+					break;
+				events.get(0).execute(roads);
+				events.remove(0);
+			}
+			
+			for (Junction junc : roads.getJunctions())
+				junc.advance(time);
+			
+			for (Road road : roads.getRoads())
+				road.advance(time);
+			
+			for (TrafficSimObserver obs : observer)
+				obs.onAdvanceEnd(roads, events, time);
 		
-		while (!events.isEmpty()) {
-			if (events.get(0).getTime() > time)
-				break;
-			events.get(0).execute(roads);
-			events.remove(0);
+		} catch (Exception e) {
+			
+			for (TrafficSimObserver obs : observer)
+				obs.onError(e.getMessage());
+			throw e;
 		}
-		
-		for (Junction junc : roads.getJunctions()) 
-			junc.advance(time);
-		
-		for (Road road : roads.getRoads())
-			road.advance(time);
 	}
 	
 	public JSONObject report() {
@@ -50,6 +74,18 @@ public class TrafficSimulator {
 		data.put("state", roads.report());
 		
 		return data;
+	}
+
+	@Override
+	public void addObserver(TrafficSimObserver o) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeObserve(TrafficSimObserver o) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

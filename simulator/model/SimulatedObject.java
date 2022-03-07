@@ -9,6 +9,8 @@ public abstract class SimulatedObject {
 	protected String _id;
 
 	SimulatedObject(String id) {
+		if (id == "0" || id.isEmpty())
+			throw new IllegalArgumentException("Error: Id not valid");
 		_id = id;
 	}
 
@@ -36,4 +38,6 @@ public abstract class SimulatedObject {
 		SimulatedObject other = (SimulatedObject) obj;
 		return Objects.equals(_id, other._id);
 	}
+	
+	
 }
