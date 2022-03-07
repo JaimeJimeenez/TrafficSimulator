@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import simulator.model.Event;
+import simulator.model.TrafficSimObserver;
 import simulator.factories.Factory;
 import simulator.model.TrafficSimulator;
 
@@ -21,6 +22,12 @@ public class Controller {
 		this.simulator = sim;
 		this.eventsFactory = eventsFactory;
 	}
+	
+	public void addObserver(TrafficSimObserver o) { simulator.addObserver(o); }
+	
+	public void removeObserver(TrafficSimObserver o) { simulator.removeObserve(o); }
+	
+	public void addEvent(Event e) { simulator.addEvent(e); }
 	
 	public void reset() { simulator.reset(); }
 	
@@ -48,7 +55,6 @@ public class Controller {
 		p.println(simulator.report().toString());
 		p.println("]");
 		p.println("}");
-		
 	}
 	
 }
