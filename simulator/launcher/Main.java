@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
+import javax.swing.SwingUtilities;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -35,6 +37,8 @@ import simulator.model.DequeuingStrategy;
 import simulator.model.Event;
 import simulator.model.LightSwitchingStrategy;
 import simulator.model.TrafficSimulator;
+import simulator.view.MainWindow;
+
 
 public class Main {
 
@@ -116,7 +120,7 @@ public class Main {
 
 	private static void parseInFileOption(CommandLine line) throws ParseException {
 		_inFile = line.getOptionValue("i");
-		if (_inFile == null) {
+		if (_inFile == null && _mode == "console") {
 			throw new ParseException("An events file is missing");
 		}
 	}
@@ -173,15 +177,39 @@ public class Main {
 		
 	}
 
+	private static void startGuiMode() throws IOException {
+		TrafficSimulator sim = new TrafficSimulator();
+		Controller ctrl = new Controller(sim, _eventsFactory);
+		
+		if (_inFile != null) {
+			try (InputStream is = new FileInputStream(new File(_inFile));) {
+				ctrl.loadEvents(is);
+				is.close();
+				
+			} catch (FileNotFoundException e) {
+				throw new IOException("Invalid Input File");
+			}
+		}
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				new MainWindow(ctrl);
+			}
+		});
+		
+	}
+	
 	private static void start(String[] args) throws IOException {
 		initFactories();
 		parseArgs(args);
+		
 		if (_mode == null)
-			startBatchMode();
+			startGuiMode();
 		else if (_mode.equals("console"))
 			startBatchMode();
 		else
-			startBatchMode(); //It will be replace when we will implement the swing mode
+			startGuiMode();
 	}
 
 	// example command lines:
