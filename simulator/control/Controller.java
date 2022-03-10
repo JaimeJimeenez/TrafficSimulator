@@ -57,4 +57,10 @@ public class Controller {
 		p.println("}");
 	}
 	
+	public void run(int steps) {
+		for (int i = 0; i < steps; i++) 
+			simulator.advance();
+		
+	}
+	
 }
