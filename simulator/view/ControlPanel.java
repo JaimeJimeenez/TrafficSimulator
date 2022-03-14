@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Box;
@@ -24,13 +25,18 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import simulator.control.Controller;
+import simulator.factories.SetContClassEventBuilder;
 import simulator.model.Event;
 import simulator.model.RoadMap;
+import simulator.model.SetContClassEvent;
+import simulator.model.SetWeatherEvent;
 import simulator.model.TrafficSimObserver;
 
 public class ControlPanel extends JPanel implements TrafficSimObserver {
 
 	private static final long serialVersionUID = 1L;
+	
+	private RoadMap map;
 	
 	private Controller ctrl;
 	private ChangeCO2ClassDialog co2ClassDialog;
@@ -44,7 +50,6 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 	private JButton stopButton;
 	private JSpinner ticksSpinner;
 	private JButton exitButton;
-	
 	
 	private boolean _stopped;
 	
@@ -88,29 +93,21 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (co2ClassDialog == null) {
-					co2ClassDialog = new ChangeCO2ClassDialog();
-					co2ClassDialog.setVisible(true);
-				}
-				else
-					co2ClassDialog.setVisible(true);
+				setCO2Vehicle();
 			}
+			
 		});
 		mainToolBar.add(contClassButton);
 		
 		//Weather Button
 		weatherButton = createButton("resources/icons/weather.png", "Change the weather of a road");
 		weatherButton.addActionListener(new ActionListener() {
-			
+		
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (weatherDialog == null) {
-					weatherDialog = new ChangeWeatherDialog();
-					weatherDialog.setVisible(true);
-				}
-				else
-					weatherDialog.setVisible(true);
+				setNewWeather();
 			}
+			
 		});
 		mainToolBar.add(weatherButton);
 		
@@ -201,11 +198,28 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 	}
 	
 	private void stop() { _stopped = true; }
+	
+	private void setCO2Vehicle() {
+		if (co2ClassDialog == null)
+			co2ClassDialog = new ChangeCO2ClassDialog();
+		else
+			co2ClassDialog.setVisible(true);
+		if (co2ClassDialog.open(map.getVehicles()) == 1)
+			ctrl.addEvent(new SetContClassEvent(co2ClassDialog.getTime(), co2ClassDialog.getNewCO2Vehicle()));
+	}
+	
+	private void setNewWeather() {
+		if (weatherDialog == null)
+			weatherDialog = new ChangeWeatherDialog();
+		else
+			weatherDialog.setVisible(true);
+		if (weatherDialog.open(map.getRoads()) == 1)
+			ctrl.addEvent(new SetWeatherEvent(weatherDialog.getTime(), weatherDialog.getNewWeather()));
+	}
 
 	@Override
 	public void onAdvanceStart(RoadMap map, List<Event> events, int time) {
-		// TODO Auto-generated method stub
-		
+		this.map = map;
 	}
 
 	@Override
@@ -216,7 +230,6 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 
 	@Override
 	public void onEventAdded(RoadMap map, List<Event> events, Event e, int time) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -227,8 +240,7 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 
 	@Override
 	public void onRegister(RoadMap map, List<Event> events, int time) {
-		// TODO Auto-generated method stub
-		
+		this.map = map;
 	}
 
 	@Override
