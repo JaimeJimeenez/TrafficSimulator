@@ -48,6 +48,8 @@ public class Vehicle extends SimulatedObject {
 	
 	public Road getRoad() { return road; }
 	
+	public int getTotalDistance() { return totalDistance; }
+	
 	void setSpeed(int s) {
 		if (s < 0)
 			throw new IllegalArgumentException("Error: New speed is negative");
