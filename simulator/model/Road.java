@@ -45,11 +45,13 @@ abstract public class Road extends SimulatedObject {
 	
 	public int getContLimit() { return contLimit; }
 	
-	int getMaxSpeed() { return maxSpeed; }
+	public int getMaxSpeed() { return maxSpeed; }
+	
+	public int getCO2Limit() { return contLimit; }
 	
 	public int getTotalCO2() { return totalCO2; }
 	
-	int getSpeedLimit() { return speedLimit; }
+	public int getSpeedLimit() { return speedLimit; }
 	
 	public List<Vehicle> getVehicles() { return Collections.unmodifiableList(vehicles); }
 	
