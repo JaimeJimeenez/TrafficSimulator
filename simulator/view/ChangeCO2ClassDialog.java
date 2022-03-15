@@ -2,6 +2,7 @@ package simulator.view;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -24,7 +26,7 @@ public class ChangeCO2ClassDialog extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 
-	private int status;
+	private boolean status;
 	
 	private JComboBox<String> boxVehicles;
 	private JComboBox<Integer> boxCO2;
@@ -32,8 +34,8 @@ public class ChangeCO2ClassDialog extends JDialog {
 	private JButton cancelButton;
 	private JButton okButton;
 
-	ChangeCO2ClassDialog() {
-		this.status = 0;
+	ChangeCO2ClassDialog(Frame frame) {
+		super(frame, true);
 		initGui();
 	}
 	
@@ -66,6 +68,8 @@ public class ChangeCO2ClassDialog extends JDialog {
 		
 		boxCO2 = new JComboBox<Integer>();
 		boxCO2.setPreferredSize(new Dimension(50, 25));
+		for (int i = 0; i < 10; i++)
+			boxCO2.addItem(i);
 		centerPanel.add(boxCO2);
 		
 		// Ticks
@@ -79,51 +83,42 @@ public class ChangeCO2ClassDialog extends JDialog {
 		JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 2, 3));
 		mainPanel.add(bottomPanel);
 		
-		cancelButton = createButton("Cancel");
+		cancelButton = new JButton("Cancel");
 		bottomPanel.add(cancelButton);
 		cancelButton.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				status = 0;
+				status = false;
 				setVisible(false);
 			}
 
 		});
 		
-		okButton = createButton("Ok");
+		okButton = new JButton("Ok");
 		bottomPanel.add(okButton);
 		okButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				status = 1;
+				if (boxVehicles.getSelectedItem() != null && boxCO2.getSelectedItem() != null)
+					status = true;
 				setVisible(false);
 			}
 		});
 		
 		pack();
 		setName("Change CO2 Class");
-		setVisible(true);
+		setLocationRelativeTo(null);
 	}
 	
-	int getStatus() { return status; }
-	
-	int open(List<Vehicle> vehicles) {
+	boolean open(List<Vehicle> vehicles) {
 		
 		boxVehicles.removeAllItems();
 		for (Vehicle v : vehicles)
 			boxVehicles.addItem(v.toString());
 		
-		boxCO2.removeAllItems();
-		for (int i = 0; i < 10; i++)
-			boxCO2.addItem(i);
-		
+		setVisible(true);
 		return status;
-	}
-	
-	private JButton createButton(String name) {
-		JButton returnButton = new JButton(name);
-		return returnButton;
 	}
 	
 	List<Pair<String, Integer>> getNewCO2Vehicle() {
@@ -135,4 +130,5 @@ public class ChangeCO2ClassDialog extends JDialog {
 	}
 	
 	int getTime() { return (int) ticksSpinner.getValue(); }
+	
 }
