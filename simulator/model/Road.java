@@ -41,7 +41,7 @@ abstract public class Road extends SimulatedObject {
 	
 	public Junction getDest() { return dest; }
 	
-	Weather getWeather() { return weather; }
+	public Weather getWeather() { return weather; }
 	
 	public int getContLimit() { return contLimit; }
 	
