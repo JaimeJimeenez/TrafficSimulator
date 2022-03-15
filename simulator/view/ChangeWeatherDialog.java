@@ -2,6 +2,7 @@ package simulator.view;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -24,15 +25,17 @@ public class ChangeWeatherDialog extends JDialog {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private int status;
+	private boolean status;
 	
+	private final Weather[] dataWeather = { Weather.CLOUDY, Weather.RAINY, Weather.STORM, Weather.SUNNY, Weather.WINDY };
 	private JComboBox<String> boxRoad;
 	private JComboBox<Weather> boxWeather;
 	private JButton cancelButton;
 	private JButton okButton;
 	private JSpinner ticksSpinner;
 	
-	ChangeWeatherDialog() {
+	ChangeWeatherDialog(Frame frame) {
+		super(frame, true);
 		initGui();
 	}
 	
@@ -64,7 +67,7 @@ public class ChangeWeatherDialog extends JDialog {
 		JLabel weatherLabel = new JLabel("Weather:");
 		centerPanel.add(weatherLabel);
 		
-		boxWeather = new JComboBox<Weather>();
+		boxWeather = new JComboBox<Weather>(dataWeather);
 		boxWeather.setPreferredSize(new Dimension(50, 25));
 		
 		centerPanel.add(boxWeather);
@@ -84,7 +87,7 @@ public class ChangeWeatherDialog extends JDialog {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				status = 0;
+				status = false;
 				setVisible(false);
 			}
 			
@@ -96,39 +99,41 @@ public class ChangeWeatherDialog extends JDialog {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				status = 1;
+				if (boxRoad.getSelectedItem() != null && boxWeather.getSelectedItem() != null)
+						status = true;
 				setVisible(false);
+				
 			}
 		});
 		
 		setName("Change Road Weather");
 		pack();
-		setVisible(true);
+		setLocationRelativeTo(null);
 	}
 
-	int open(List<Road> roads) {
+	boolean open(List<Road> roads) {
 		
 		boxRoad.removeAllItems();
 		for (Road r : roads)
 			boxRoad.addItem(r.toString());
 		
-		boxWeather.removeAllItems();
-		boxWeather.addItem(Weather.CLOUDY);
-		boxWeather.addItem(Weather.RAINY);
-		boxWeather.addItem(Weather.STORM);
-		boxWeather.addItem(Weather.SUNNY);
-		boxWeather.addItem(Weather.WINDY);
+		setVisible(true);
 		
 		return status;
 	}
 	
+	void showStatus() { System.out.println(status); }
+	
 	List<Pair<String, Weather>> getNewWeather() {
 		List<Pair<String, Weather>> data = new ArrayList<>();
+		
 		String r = (String) boxRoad.getSelectedItem().toString();
 		Weather w = (Weather) boxWeather.getSelectedItem();
+		
 		data.add(new Pair<String, Weather>(r, w));
 		return data;
 	}
 	
 	int getTime() { return (int) ticksSpinner.getValue(); }
+	
 }
