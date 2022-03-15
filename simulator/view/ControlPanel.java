@@ -1,7 +1,9 @@
 package simulator.view;
 
-
+import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -37,6 +39,7 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 	private static final long serialVersionUID = 1L;
 	
 	private RoadMap map;
+	private int time;
 	
 	private Controller ctrl;
 	private ChangeCO2ClassDialog co2ClassDialog;
@@ -56,11 +59,12 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 	ControlPanel(Controller ctrl) {
 		this.ctrl = ctrl;
 		_stopped = false;
-		initGUI();
 		ctrl.addObserver(this);
+		initGUI();
 	}
 
 	private void initGUI() {
+		this.setLayout(new BorderLayout());
 		JToolBar mainToolBar = new JToolBar();
 		add(mainToolBar);
 		
@@ -85,7 +89,7 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 			}
 		});
 		mainToolBar.add(fileButton);
-		
+		mainToolBar.addSeparator();
 		
 		//ContClass Button
 		contClassButton = createButton("resources/icons/co2class.png", "Change the contamination class of one vehicle");
@@ -93,7 +97,11 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				setCO2Vehicle();
+				try {
+					setCO2Vehicle();
+				} catch(Exception exception) {
+					exception.printStackTrace();
+				}
 			}
 			
 		});
@@ -105,7 +113,11 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 		
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				setNewWeather();
+				try {
+					setNewWeather();
+				} catch(Exception exception) {
+					exception.printStackTrace();
+				}
 			}
 			
 		});
@@ -139,12 +151,12 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 		JLabel ticksLabel = new JLabel("Ticks:");
 		mainToolBar.add(ticksLabel);
 		ticksSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 1000, 1));
+		ticksSpinner.setMaximumSize(new Dimension(100, 40));
+		ticksSpinner.setMinimumSize(new Dimension(100, 40));
+		ticksSpinner.setPreferredSize(new Dimension(100, 40));
 		mainToolBar.add(ticksSpinner);
+		mainToolBar.add(Box.createGlue());
 		
-		JSeparator separator = new JSeparator(SwingConstants.VERTICAL);
-		separator.setPreferredSize(new Dimension(100, 42));
-		mainToolBar.add(separator);
-		mainToolBar.add(Box.createHorizontalGlue());
 		
 		//Exit Button
 		exitButton = createButton("resources/icons/exit.png", "Exit the simulation");
@@ -159,10 +171,11 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 			}
 		});
 		mainToolBar.add(exitButton);
+		
 	}
 	
 	private JButton createButton(String image, String info) {
-		JButton newButton = new JButton(new ImageIcon(image));
+		JButton newButton = new JButton(new ImageIcon(Toolkit.getDefaultToolkit().createImage(image)));
 		newButton.setHorizontalAlignment(JLabel.LEFT);
 		newButton.setToolTipText(info);
 		
@@ -200,31 +213,25 @@ public class ControlPanel extends JPanel implements TrafficSimObserver {
 	private void stop() { _stopped = true; }
 	
 	private void setCO2Vehicle() {
-		if (co2ClassDialog == null)
-			co2ClassDialog = new ChangeCO2ClassDialog();
-		else
-			co2ClassDialog.setVisible(true);
-		if (co2ClassDialog.open(map.getVehicles()) == 1)
-			ctrl.addEvent(new SetContClassEvent(co2ClassDialog.getTime(), co2ClassDialog.getNewCO2Vehicle()));
+		co2ClassDialog = new ChangeCO2ClassDialog((Frame) SwingUtilities.getWindowAncestor(this));
+		if (co2ClassDialog.open(map.getVehicles()))
+			ctrl.addEvent(new SetContClassEvent(co2ClassDialog.getTime() + time, co2ClassDialog.getNewCO2Vehicle()));
 	}
 	
 	private void setNewWeather() {
-		if (weatherDialog == null)
-			weatherDialog = new ChangeWeatherDialog();
-		else
-			weatherDialog.setVisible(true);
-		if (weatherDialog.open(map.getRoads()) == 1)
-			ctrl.addEvent(new SetWeatherEvent(weatherDialog.getTime(), weatherDialog.getNewWeather()));
+		weatherDialog = new ChangeWeatherDialog((Frame) SwingUtilities.getWindowAncestor(this));
+		if (weatherDialog.open(map.getRoads())) 
+			ctrl.addEvent(new SetWeatherEvent(weatherDialog.getTime() + time, weatherDialog.getNewWeather()));
 	}
 
 	@Override
 	public void onAdvanceStart(RoadMap map, List<Event> events, int time) {
 		this.map = map;
+		this.time = time;
 	}
 
 	@Override
 	public void onAdvanceEnd(RoadMap map, List<Event> events, int time) {
-		// TODO Auto-generated method stub
 		
 	}
 
