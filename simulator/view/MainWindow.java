@@ -1,15 +1,18 @@
 package simulator.view;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.border.Border;
 
 import simulator.control.Controller;
 
@@ -47,13 +50,27 @@ public class MainWindow extends JFrame {
 		JPanel eventsView = createViewPanel(new JTable(new EventsTableModel(_ctrl)), "Events");
 		eventsView.setPreferredSize(new Dimension(500, 200));
 		tablesPanel.add(eventsView);
-		// TODO add other tables...
+		
+		JPanel vehiclesTable = createViewPanel(new JTable(new VehiclesTableModel(_ctrl)), "Vehicles");
+		vehiclesTable.setPreferredSize(new Dimension(500, 200));
+		tablesPanel.add(vehiclesTable);
+		
+		JPanel roadsTable = createViewPanel(new JTable(new RoadsTableModel(_ctrl)), "Roads");
+		roadsTable.setPreferredSize(new Dimension(500, 200));
+		tablesPanel.add(roadsTable);
+		
+		JPanel junctionsTable = createViewPanel(new JTable(new JunctionsTableModel(_ctrl)), "Junctions");
+		junctionsTable.setPreferredSize(new Dimension(500, 200));
+		tablesPanel.add(junctionsTable);
 		
 		// Maps
 		JPanel mapView = createViewPanel(new MapComponent(_ctrl), "Map");
-		mapView.setPreferredSize(new Dimension(500, 400));
+		mapView.setPreferredSize(new Dimension(500, 200));
 		mapsPanel.add(mapView);
-		// TODO add a map for MapByRoadComponent
+		
+		JPanel mapRoads = createViewPanel(new MapByRoadComponent(_ctrl), "Map By Road");
+		mapRoads.setPreferredSize(new Dimension(500, 200));
+		mapsPanel.add(mapRoads);
 		
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		pack();
@@ -62,8 +79,8 @@ public class MainWindow extends JFrame {
 	
 	private JPanel createViewPanel(JComponent c, String title) {
 		JPanel p = new JPanel(new BorderLayout());
-		// TODO add a framed border to p with title
-		
+		Border border = BorderFactory.createLineBorder(Color.BLACK, 2);
+		p.setBorder(BorderFactory.createTitledBorder(border, title));
 		p.add(new JScrollPane(c));
 		return p;
 	}
