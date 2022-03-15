@@ -12,7 +12,6 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
 
 import simulator.control.Controller;
 import simulator.model.Event;
