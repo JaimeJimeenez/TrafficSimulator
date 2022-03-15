@@ -1,5 +1,6 @@
 package simulator.view;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
@@ -13,56 +14,63 @@ public class EventsTableModel extends AbstractTableModel implements TrafficSimOb
 
 	private static final long serialVersionUID = 1L;
 
+	private static final String columnNames[] = { "Time", "Desc."};
+	private List<Event> events;
+	
 	EventsTableModel(Controller ctrl) {
-		
+		events = new ArrayList<>();
+		ctrl.addObserver(this);
 	}
 	
+	public String getColumnName(int i) { return columnNames[i]; }
+	
 	@Override
-	public int getRowCount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	public int getRowCount() { return events.size(); }
 
 	@Override
-	public int getColumnCount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	public int getColumnCount() { return columnNames.length; }
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		// TODO Auto-generated method stub
+		
+		switch(columnIndex) {
+		case 0:
+			return events.get(rowIndex).getTime();
+		case 1:
+			return events.get(rowIndex).toString();
+		}
+		
 		return null;
 	}
 
 	@Override
 	public void onAdvanceStart(RoadMap map, List<Event> events, int time) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void onAdvanceEnd(RoadMap map, List<Event> events, int time) {
-		// TODO Auto-generated method stub
-		
+		this.events = events;
+		fireTableDataChanged();
 	}
 
 	@Override
 	public void onEventAdded(RoadMap map, List<Event> events, Event e, int time) {
-		// TODO Auto-generated method stub
-		
+		if (!this.events.contains(e))
+			this.events.add(e);
+		fireTableDataChanged();
 	}
 
 	@Override
 	public void onReset(RoadMap map, List<Event> events, int time) {
-		// TODO Auto-generated method stub
-		
+		this.events = new ArrayList<>();
+		fireTableDataChanged();
 	}
 
 	@Override
 	public void onRegister(RoadMap map, List<Event> events, int time) {
-		// TODO Auto-generated method stub
-		
+		this.events = events;
+		fireTableDataChanged();
 	}
 
 	@Override
@@ -70,6 +78,5 @@ public class EventsTableModel extends AbstractTableModel implements TrafficSimOb
 		// TODO Auto-generated method stub
 		
 	}
-
 	
 }
