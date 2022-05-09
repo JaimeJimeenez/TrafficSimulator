@@ -17,11 +17,15 @@ public class SetContClassEvent extends Event {
 
 	@Override
 	void execute(RoadMap map) {
+		
 		for (Pair<String, Integer> p : cs) {
 			if (map.getVehicle(p.getFirst()) == null)
 				throw new IllegalArgumentException("Error: This vehicle doesn't exist");
 			map.getVehicle(p.getFirst()).setContaminationClass(p.getSecond());
 		}	
 	}
+	
+	@Override
+	public String toString() { return "Change CO2 class: " + cs.toString(); } 
 
 }

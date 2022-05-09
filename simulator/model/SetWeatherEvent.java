@@ -17,9 +17,12 @@ public class SetWeatherEvent extends Event {
 
 	@Override
 	void execute(RoadMap map) {
+
 		for (Pair<String, Weather> w : ws) 
 			if (map.getRoad(w.getFirst()) != null)
 				map.getRoad(w.getFirst()).setWeather(w.getSecond());
 	}
 
+	@Override
+	public String toString() { return "Change Weather: " + ws.toString(); }
 }

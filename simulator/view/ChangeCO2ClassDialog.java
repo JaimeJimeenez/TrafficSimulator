@@ -20,7 +20,6 @@ import javax.swing.SpinnerNumberModel;
 import simulator.misc.Pair;
 import simulator.model.Vehicle;
 
-
 public class ChangeCO2ClassDialog extends JDialog {
 
 	private static final long serialVersionUID = 1L;

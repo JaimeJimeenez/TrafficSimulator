@@ -122,8 +122,6 @@ public class ChangeWeatherDialog extends JDialog {
 		return status;
 	}
 	
-	void showStatus() { System.out.println(status); }
-	
 	List<Pair<String, Weather>> getNewWeather() {
 		List<Pair<String, Weather>> data = new ArrayList<>();
 		

@@ -47,7 +47,8 @@ public class RoadMap {
 		roadsMap.put(road.getId(), road);
 	}
 	
-	private boolean checkItinerary(List<Junction> itinerary) { 
+	private boolean checkItinerary(List<Junction> itinerary) {
+		
 		
 		for (Junction j : itinerary)
 			if (!junctionsMap.containsValue(j))

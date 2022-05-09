@@ -26,4 +26,3 @@ public class BuilderBasedFactory<T> implements Factory<T> {
 		throw new IllegalArgumentException("Invalid value for createInstance: " + info);
 	}
 }
-

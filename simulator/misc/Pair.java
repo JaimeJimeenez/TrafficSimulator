@@ -16,5 +16,8 @@ public class Pair<T1, T2> {
 	public T2 getSecond() {
 		return _second;
 	}
+	
+	@Override
+	public String toString() { return "(" + _first + "," + _second + ")"; }
 
 }

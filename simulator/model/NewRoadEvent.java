@@ -26,4 +26,7 @@ abstract public class NewRoadEvent extends Event {
 	}
 	
 	abstract protected Road createRoadObject();
+	
+	@Override
+	public String toString() { return "New Road '" + id + "'"; }
 }

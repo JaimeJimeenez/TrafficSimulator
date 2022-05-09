@@ -13,6 +13,7 @@ public class MostCrowdedStrategy implements LightSwitchingStrategy {
 	private int getNextGreen(List<List<Vehicle>> vehicles, int position) {
 		int maxSize = -1;
 		int nextGreen = 0;
+			
 		int index = position;
 		
 		for (int i = 0; i < vehicles.size(); i++) 

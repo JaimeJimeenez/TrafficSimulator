@@ -22,5 +22,7 @@ public class NewJunctionEvent extends Event {
 		Junction newJunc = new Junction(id, lsStrategy, dqsStrategy, xCoor, yCoor);
 		map.addJunction(newJunc);
 	}
-
+	
+	@Override
+	public String toString() { return "New Junction '" + id + "'"; }
 }

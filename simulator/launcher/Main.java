@@ -39,7 +39,6 @@ import simulator.model.LightSwitchingStrategy;
 import simulator.model.TrafficSimulator;
 import simulator.view.MainWindow;
 
-
 public class Main {
 
 	private final static Integer _timeLimitDefaultValue = 10;

@@ -46,7 +46,7 @@ public class MapByRoadComponent extends JComponent implements TrafficSimObserver
 		_car = loadImage("car.png");
 		setPreferredSize(new Dimension(300, 200));
 	}
-	
+
 	public void paintComponent(Graphics graphics) {
 		super.paintComponent(graphics);
 		Graphics2D g = (Graphics2D) graphics;

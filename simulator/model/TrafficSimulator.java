@@ -15,13 +15,25 @@ public class TrafficSimulator implements Observable<TrafficSimObserver> {
 	int time;
 	
 	public TrafficSimulator() {
+		observer = new ArrayList<>();
 		reset();
+	}
+
+	@Override
+	public void addObserver(TrafficSimObserver o) {
+		if (!observer.contains(o))
+			observer.add(o);
+	}
+
+	@Override
+	public void removeObserve(TrafficSimObserver o) {
+		if (observer.contains(o))
+			observer.remove(o);
 	}
 	
 	public void reset() {
 		roads = new RoadMap();
 		events = new SortedArrayList<>();
-		observer = new ArrayList<>();
 		time = 0;
 		
 		for (TrafficSimObserver obs : observer)
@@ -33,7 +45,6 @@ public class TrafficSimulator implements Observable<TrafficSimObserver> {
 		
 		for (TrafficSimObserver obs : observer)
 			obs.onEventAdded(roads, events, event, time);
-
 	}
 	
 	public void advance() {
@@ -63,6 +74,7 @@ public class TrafficSimulator implements Observable<TrafficSimObserver> {
 			
 			for (TrafficSimObserver obs : observer)
 				obs.onError(e.getMessage());
+			
 			throw e;
 		}
 	}
@@ -74,18 +86,6 @@ public class TrafficSimulator implements Observable<TrafficSimObserver> {
 		data.put("state", roads.report());
 		
 		return data;
-	}
-
-	@Override
-	public void addObserver(TrafficSimObserver o) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void removeObserve(TrafficSimObserver o) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

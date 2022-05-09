@@ -13,7 +13,7 @@ import simulator.model.Weather;
 
 public class SetWeatherEventBuilder extends Builder<Event> {
 
-    public SetWeatherEventBuilder() {
+	public SetWeatherEventBuilder() {
 		super("set_weather");
 	}
 
@@ -22,7 +22,7 @@ public class SetWeatherEventBuilder extends Builder<Event> {
 		int time = data.getInt("time");
 		JSONArray json = data.getJSONArray("info");
 		List<Pair<String, Weather>> info = new ArrayList<>();
-
+		
 		for (int i = 0; i < json.length(); i++)
 			info.add(new Pair<String, Weather> (json.getJSONObject(i).getString("road"), Weather.valueOf(json.getJSONObject(i).getString("weather").toUpperCase())));
 		

@@ -65,16 +65,17 @@ public class MainWindow extends JFrame {
 		
 		// Maps
 		JPanel mapView = createViewPanel(new MapComponent(_ctrl), "Map");
-		mapView.setPreferredSize(new Dimension(500, 200));
+		mapView.setPreferredSize(new Dimension(500, 400));
 		mapsPanel.add(mapView);
 		
 		JPanel mapRoads = createViewPanel(new MapByRoadComponent(_ctrl), "Map By Road");
-		mapRoads.setPreferredSize(new Dimension(500, 200));
+		mapRoads.setPreferredSize(new Dimension(500, 400));
 		mapsPanel.add(mapRoads);
 		
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		pack();
 		setVisible(true);
+		setLocationRelativeTo(null);
 	}
 	
 	private JPanel createViewPanel(JComponent c, String title) {

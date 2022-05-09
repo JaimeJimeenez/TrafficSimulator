@@ -25,4 +25,3 @@ public abstract class Builder<T> {
 
 	protected abstract T createTheInstance(JSONObject data);
 }
-
